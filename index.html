@@ -1,447 +1,441 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌙 Download Center</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
-      color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-      padding: 40px 20px;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    .stars {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .star {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      animation: twinkle linear infinite;
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 3em;
-      margin-bottom: 50px;
-      text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
-      animation: float 3s ease-in-out infinite;
-    }
-
-    .files-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-    }
-
-    .box {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      padding: 30px;
-      border-radius: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .box::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(45deg, 
-        transparent, 
-        rgba(100, 200, 255, 0.1), 
-        transparent);
-      transform: rotate(45deg);
-      transition: all 0.6s;
-    }
-
-    .box:hover::before {
-      left: 100%;
-    }
-
-    .box:hover {
-      transform: translateY(-10px);
-      border-color: rgba(100, 200, 255, 0.5);
-      box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.4),
-        0 0 30px rgba(100, 200, 255, 0.3);
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .logo-container {
-      width: 100%;
-      height: 180px;
-      margin-bottom: 20px;
-      border-radius: 15px;
-      overflow: hidden;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      position: relative;
-    }
-
-    .logo-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s;
-    }
-
-    .box:hover .logo-container img {
-      transform: scale(1.1);
-    }
-
-    .box h2 {
-      font-size: 1.8em;
-      margin-bottom: 12px;
-      color: #64c8ff;
-      text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
-    }
-
-    .box p {
-      margin-bottom: 25px;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1.6;
-    }
-
-    .download-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 15px 35px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      text-decoration: none;
-      border-radius: 30px;
-      font-weight: bold;
-      font-size: 1.1em;
-      transition: all 0.3s;
-      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      border: none;
-    }
-
-    .download-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.3), 
-        transparent);
-      transition: left 0.5s;
-    }
-
-    .download-btn:hover::before {
-      left: 100%;
-    }
-
-    .download-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 
-        0 8px 30px rgba(102, 126, 234, 0.6),
-        0 0 20px rgba(118, 75, 162, 0.5);
-    }
-
-    .download-btn:active {
-      transform: scale(0.98);
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(5px);
-      animation: fadeIn 0.3s;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .modal-content {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      margin: 15% auto;
-      padding: 40px;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 500px;
-      text-align: center;
-      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
-      animation: slideDown 0.4s;
-    }
-
-    @keyframes slideDown {
-      from { 
-        transform: translateY(-50px);
-        opacity: 0;
-      }
-      to { 
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .modal-content h2 {
-      margin-bottom: 20px;
-      font-size: 2em;
-    }
-
-    .modal-content p {
-      margin-bottom: 30px;
-      font-size: 1.1em;
-      opacity: 0.9;
-    }
-
-    .modal-btns {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-    }
-
-    .modal-btn {
-      padding: 12px 30px;
-      border: none;
-      border-radius: 25px;
-      font-weight: bold;
-      font-size: 1em;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-confirm {
-      background: white;
-      color: #667eea;
-    }
-
-    .btn-confirm:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 20px rgba(255, 255, 255, 0.4);
-    }
-
-    .btn-cancel {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-    }
-
-    .btn-cancel:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 2em;
-      }
-      
-      .files-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .modal-content {
-        margin: 30% auto;
-        padding: 30px 20px;
-      }
-    }
-  </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>🌙 Download Center</title>
+ <style>
+ * {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+ }
+ body {
+ background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+ color: #fff;
+ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ min-height: 100vh;
+ padding: 40px 20px;
+ position: relative;
+ overflow-x: hidden;
+ }
+ .stars {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ pointer-events: none;
+ z-index: 0;
+ }
+ .star {
+ position: absolute;
+ background: white;
+ border-radius: 50%;
+ animation: twinkle linear infinite;
+ }
+ @keyframes twinkle {
+ 0%, 100% { opacity: 0; }
+ 50% { opacity: 1; }
+ }
+ @keyframes float {
+ 0%, 100% { transform: translateY(0px); }
+ 50% { transform: translateY(-20px); }
+ }
+ .container {
+ max-width: 1000px;
+ margin: 0 auto;
+ position: relative;
+ z-index: 1;
+ }
+ h1 {
+ text-align: center;
+ font-size: 3em;
+ margin-bottom: 50px;
+ text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+ animation: float 3s ease-in-out infinite;
+ }
+ .files-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+ gap: 30px;
+ }
+ .box {
+ background: rgba(255, 255, 255, 0.05);
+ backdrop-filter: blur(10px);
+ padding: 30px;
+ border-radius: 20px;
+ border: 2px solid rgba(255, 255, 255, 0.1);
+ transition: all 0.4s ease;
+ position: relative;
+ overflow: hidden;
+ }
+ .box::before {
+ content: '';
+ position: absolute;
+ top: -50%;
+ left: -50%;
+ width: 200%;
+ height: 200%;
+ background: linear-gradient(45deg, 
+ transparent, 
+ rgba(100, 200, 255, 0.1), 
+ transparent);
+ transform: rotate(45deg);
+ transition: all 0.6s;
+ }
+ .box:hover::before {
+ left: 100%;
+ }
+ .box:hover {
+ transform: translateY(-10px);
+ border-color: rgba(100, 200, 255, 0.5);
+ box-shadow: 
+ 0 20px 40px rgba(0, 0, 0, 0.4),
+ 0 0 30px rgba(100, 200, 255, 0.3);
+ background: rgba(255, 255, 255, 0.1);
+ }
+ .logo-container {
+ width: 100%;
+ height: 180px;
+ margin-bottom: 20px;
+ border-radius: 15px;
+ overflow: hidden;
+ border: 2px solid rgba(255, 255, 255, 0.2);
+ position: relative;
+ }
+ .logo-container img {
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
+ transition: transform 0.4s;
+ }
+ .box:hover .logo-container img {
+ transform: scale(1.1);
+ }
+ .box h2 {
+ font-size: 1.8em;
+ margin-bottom: 12px;
+ color: #64c8ff;
+ text-shadow: 0 0 10px rgba(100, 200, 255, 0.5);
+ }
+ .box p {
+ margin-bottom: 25px;
+ color: rgba(255, 255, 255, 0.8);
+ line-height: 1.6;
+ }
+ .download-btn {
+ display: inline-flex;
+ align-items: center;
+ gap: 10px;
+ padding: 15px 35px;
+ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+ color: white;
+ text-decoration: none;
+ border-radius: 30px;
+ font-weight: bold;
+ font-size: 1.1em;
+ transition: all 0.3s;
+ box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+ position: relative;
+ overflow: hidden;
+ cursor: pointer;
+ border: none;
+ }
+ .download-btn::before {
+ content: '';
+ position: absolute;
+ top: 0;
+ left: -100%;
+ width: 100%;
+ height: 100%;
+ background: linear-gradient(90deg, 
+ transparent, 
+ rgba(255, 255, 255, 0.3), 
+ transparent);
+ transition: left 0.5s;
+ }
+ .download-btn:hover::before {
+ left: 100%;
+ }
+ .download-btn:hover {
+ transform: scale(1.05);
+ box-shadow: 
+ 0 8px 30px rgba(102, 126, 234, 0.6),
+ 0 0 20px rgba(118, 75, 162, 0.5);
+ }
+ .download-btn:active {
+ transform: scale(0.98);
+ }
+ .modal {
+ display: none;
+ position: fixed;
+ z-index: 1000;
+ left: 0;
+ top: 0;
+ width: 100%;
+ height: 100%;
+ background: rgba(0, 0, 0, 0.8);
+ backdrop-filter: blur(5px);
+ animation: fadeIn 0.3s;
+ }
+ @keyframes fadeIn {
+ from { opacity: 0; }
+ to { opacity: 1; }
+ }
+ .modal-content {
+ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+ margin: 15% auto;
+ padding: 40px;
+ border-radius: 20px;
+ width: 90%;
+ max-width: 500px;
+ text-align: center;
+ box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+ animation: slideDown 0.4s;
+ }
+ @keyframes slideDown {
+ from { 
+ transform: translateY(-50px);
+ opacity: 0;
+ }
+ to { 
+ transform: translateY(0);
+ opacity: 1;
+ }
+ }
+ .modal-content h2 {
+ margin-bottom: 20px;
+ font-size: 2em;
+ }
+ .modal-content p {
+ margin-bottom: 30px;
+ font-size: 1.1em;
+ opacity: 0.9;
+ }
+ .modal-btns {
+ display: flex;
+ gap: 15px;
+ justify-content: center;
+ }
+ .modal-btn {
+ padding: 12px 30px;
+ border: none;
+ border-radius: 25px;
+ font-weight: bold;
+ font-size: 1em;
+ cursor: pointer;
+ transition: all 0.3s;
+ }
+ .btn-confirm {
+ background: white;
+ color: #667eea;
+ }
+ .btn-confirm:hover {
+ transform: scale(1.05);
+ box-shadow: 0 5px 20px rgba(255, 255, 255, 0.4);
+ }
+ .btn-cancel {
+ background: rgba(255, 255, 255, 0.2);
+ color: white;
+ }
+ .btn-cancel:hover {
+ background: rgba(255, 255, 255, 0.3);
+ }
+ .loading {
+ display: inline-block;
+ width: 20px;
+ height: 20px;
+ border: 3px solid rgba(255,255,255,0.3);
+ border-top-color: white;
+ border-radius: 50%;
+ animation: spin 1s linear infinite;
+ }
+ @keyframes spin {
+ to { transform: rotate(360deg); }
+ }
+ @media (max-width: 768px) {
+ h1 {
+ font-size: 2em;
+ }
+ 
+ .files-grid {
+ grid-template-columns: 1fr;
+ }
+ .modal-content {
+ margin: 30% auto;
+ padding: 30px 20px;
+ }
+ }
+ </style>
 </head>
 <body>
-  <div class="stars" id="stars"></div>
+ <div class="stars" id="stars"></div>
+ <div class="container">
+ <h1>🌙 Download Center</h1>
+ 
+ <div class="files-grid" id="filesGrid">
+ <!-- Files sẽ được render bằng JS -->
+ </div>
+ </div>
+ <div id="downloadModal" class="modal">
+ <div class="modal-content">
+ <h2>📥 Xác nhận tải xuống</h2>
+ <p id="modalText">Bạn có muốn tải file <strong id="fileName"></strong> không?</p>
+ <div class="modal-btns">
+ <button class="modal-btn btn-confirm" onclick="confirmDownload()">
+ <span id="confirmText">Tải xuống</span>
+ <span id="loadingIcon" class="loading" style="display:none;"></span>
+ </button>
+ <button class="modal-btn btn-cancel" onclick="closeModal()">Hủy</button>
+ </div>
+ </div>
+ </div>
 
-  <div class="container">
-    <h1>🌙 Download Center</h1>
-    
-    <div class="files-grid" id="filesGrid">
-      <!-- Files sẽ được render bằng JS -->
-    </div>
-  </div>
+ <!-- LOAD DATA.JS -->
+ <script src="data.js"></script>
 
-  <div id="downloadModal" class="modal">
-    <div class="modal-content">
-      <h2>📥 Xác nhận tải xuống</h2>
-      <p id="modalText">Bạn có muốn tải file <strong id="fileName"></strong> không?</p>
-      <div class="modal-btns">
-        <button class="modal-btn btn-confirm" onclick="confirmDownload()">
-          <span id="confirmText">Tải xuống</span>
-          <span id="loadingIcon" class="loading" style="display:none;"></span>
-        </button>
-        <button class="modal-btn btn-cancel" onclick="closeModal()">Hủy</button>
-      </div>
-    </div>
-  </div>
+ <script>
+ const _0x4d3f = 'aHR0cHM6Ly9kb3dubG9hZC5wbGFudHNrYWxhbjEyMy53b3JrZXJzLmRldg==';
+ 
+ function _0x2a1c() {
+ return atob(_0x4d3f);
+ }
+ 
+ let currentDownload = null;
 
-  <script src="data.js"></script>
-  <script>
-    const _0x4d3f = 'aHR0cHM6Ly9kb3dubG9hZC5wbGFudHNrYWxhbjEyMy53b3JrZXJzLmRldg==';
-    
-    function _0x2a1c() {
-      return atob(_0x4d3f);
-    }
+ // ========== TẠO SAO ==========
+ function createStars() {
+ const starsContainer = document.getElementById('stars');
+ const starCount = 150;
+ for (let i = 0; i < starCount; i++) {
+ const star = document.createElement('div');
+ star.className = 'star';
+ 
+ const size = Math.random() * 3 + 1;
+ star.style.width = size + 'px';
+ star.style.height = size + 'px';
+ star.style.left = Math.random() * 100 + '%';
+ star.style.top = Math.random() * 100 + '%';
+ star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+ star.style.animationDelay = Math.random() * 3 + 's';
+ 
+ starsContainer.appendChild(star);
+ }
+ }
 
-    let currentDownload = null;
+ // ========== RENDER FILES ==========
+ function renderFiles() {
+ // Kiểm tra xem getFilesData có tồn tại không
+ if (typeof getFilesData !== 'function') {
+ console.error('❌ getFilesData() chưa được định nghĩa!');
+ document.getElementById('filesGrid').innerHTML = 
+ '<div style="grid-column: 1/-1; color: red; text-align: center; padding: 50px;">' +
+ '<h3>⚠️ Lỗi: Không tải được dữ liệu</h3>' +
+ '<p>Vui lòng kiểm tra file <strong>data.js</strong> có nằm cùng thư mục với index.html không?</p>' +
+ '</div>';
+ return;
+ }
+ 
+ const filesData = getFilesData();
+ const grid = document.getElementById('filesGrid');
+ 
+ if (!filesData || filesData.length === 0) {
+ grid.innerHTML = '<p style="text-align: center; color: #aaa;">Không có file nào</p>';
+ return;
+ }
+ 
+ grid.innerHTML = filesData.map(file => `
+ <div class="box">
+ <div class="logo-container">
+ <img src="${file.cover}" alt="${file.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22180%22%3E%3Crect fill=%22%23333%22 width=%22300%22 height=%22180%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23666%22 font-family=%22Arial%22%3EImage Not Found%3C/text%3E%3C/svg%3E'">
+ </div>
+ <h2>${file.name.replace('.rar', '').replace('.zip', '')}</h2>
+ <p>${file.description}</p>
+ <button class="download-btn" onclick="showDownload('${file.id}', '${file.name}')">
+ <span>⬇️</span>
+ <span>Download</span>
+ </button>
+ </div>
+ `).join('');
+ }
 
-    // Tạo sao
-    const starsContainer = document.getElementById('stars');
-    const starCount = 150;
+ // ========== SHOW DOWNLOAD MODAL ==========
+ function showDownload(id, filename) {
+ currentDownload = { id, filename };
+ document.getElementById('fileName').textContent = filename;
+ document.getElementById('downloadModal').style.display = 'block';
+ }
 
-    for (let i = 0; i < starCount; i++) {
-      const star = document.createElement('div');
-      star.className = 'star';
-      
-      const size = Math.random() * 3 + 1;
-      star.style.width = size + 'px';
-      star.style.height = size + 'px';
-      star.style.left = Math.random() * 100 + '%';
-      star.style.top = Math.random() * 100 + '%';
-      star.style.animationDuration = (Math.random() * 3 + 2) + 's';
-      star.style.animationDelay = Math.random() * 3 + 's';
-      
-      starsContainer.appendChild(star);
-    }
+ // ========== CLOSE MODAL ==========
+ function closeModal() {
+ document.getElementById('downloadModal').style.display = 'none';
+ currentDownload = null;
+ document.getElementById('confirmText').style.display = 'inline';
+ document.getElementById('loadingIcon').style.display = 'none';
+ }
 
-    // Render files từ data.js
-    function renderFiles() {
-      const filesData = getFilesData();
-      const grid = document.getElementById('filesGrid');
-      
-      grid.innerHTML = filesData.map(file => `
-        <div class="box">
-          <div class="logo-container">
-            <img src="${file.cover}" alt="${file.name}">
-          </div>
-          <h2>${file.name.replace('.rar', '')}</h2>
-          <p>${file.description}</p>
-          <button class="download-btn" onclick="showDownload('${file.id}', '${file.name}')">
-            <span>⬇️</span>
-            <span>Download</span>
-          </button>
-        </div>
-      `).join('');
-    }
+ // ========== CONFIRM DOWNLOAD ==========
+ async function confirmDownload() {
+ if (!currentDownload) return;
+ 
+ document.getElementById('confirmText').style.display = 'none';
+ document.getElementById('loadingIcon').style.display = 'inline-block';
+ 
+ try {
+ const baseUrl = _0x2a1c();
+ const downloadUrl = `${baseUrl}/d/${currentDownload.id}`;
+ 
+ const a = document.createElement('a');
+ a.href = downloadUrl;
+ a.download = currentDownload.filename;
+ a.style.display = 'none';
+ document.body.appendChild(a);
+ a.click();
+ 
+ setTimeout(() => {
+ document.body.removeChild(a);
+ }, 100);
+ 
+ setTimeout(() => {
+ closeModal();
+ }, 1000);
+ } catch (error) {
+ console.error('Lỗi download:', error);
+ alert('❌ Lỗi khi tải file. Vui lòng thử lại!');
+ closeModal();
+ }
+ }
 
-    function showDownload(id, filename) {
-      currentDownload = { id, filename };
-      document.getElementById('fileName').textContent = filename;
-      document.getElementById('downloadModal').style.display = 'block';
-    }
+ // ========== CLICK OUTSIDE MODAL ==========
+ window.onclick = function(event) {
+ const modal = document.getElementById('downloadModal');
+ if (event.target == modal) {
+ closeModal();
+ }
+ }
 
-    function closeModal() {
-      document.getElementById('downloadModal').style.display = 'none';
-      currentDownload = null;
-      document.getElementById('confirmText').style.display = 'inline';
-      document.getElementById('loadingIcon').style.display = 'none';
-    }
+ // ========== KHỞI ĐỘNG ==========
+ document.addEventListener('DOMContentLoaded', function() {
+ createStars();
+ 
+ // Chờ data.js load
+ setTimeout(function() {
+ if (typeof getFilesData === 'function') {
+ renderFiles();
+ } else {
+ console.error('❌ data.js chưa tải!');
+ }
+ }, 500);
+ });
 
-    async function confirmDownload() {
-      if (!currentDownload) return;
-
-      document.getElementById('confirmText').style.display = 'none';
-      document.getElementById('loadingIcon').style.display = 'inline-block';
-
-      try {
-        const baseUrl = _0x2a1c();
-        const downloadUrl = `${baseUrl}/d/${currentDownload.id}`;
-        
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = currentDownload.filename;
-        a.style.display = 'none';
-        document.body.appendChild(a);
-        a.click();
-        
-        setTimeout(() => {
-          document.body.removeChild(a);
-        }, 100);
-
-        setTimeout(() => {
-          closeModal();
-        }, 1000);
-
-      } catch (error) {
-        alert('Lỗi khi tải file. Vui lòng thử lại!');
-        closeModal();
-      }
-    }
-
-    window.onclick = function(event) {
-      const modal = document.getElementById('downloadModal');
-      if (event.target == modal) {
-        closeModal();
-      }
-    }
-
-    // Render files khi trang load
-    renderFiles();
-
-    // Bảo vệ
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.onkeydown = function(e) {
-      if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) {
-        return false;
-      }
-    };
-  </script>
+ // ========== BẢO VỆ ==========
+ document.addEventListener('contextmenu', e => e.preventDefault());
+ document.onkeydown = function(e) {
+ if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) {
+ return false;
+ }
+ };
+ </script>
 </body>
 </html>
