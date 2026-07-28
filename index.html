@@ -21,7 +21,6 @@
       overflow-x: hidden;
     }
 
-    /* Sao lấp lánh */
     .stars {
       position: fixed;
       top: 0;
@@ -130,18 +129,6 @@
       transform: scale(1.1);
     }
 
-    .version-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(100, 200, 255, 0.8);
-      padding: 5px 12px;
-      border-radius: 15px;
-      font-size: 0.8em;
-      font-weight: bold;
-      color: #0f0c29;
-    }
-
     .box h2 {
       font-size: 1.8em;
       margin-bottom: 12px;
@@ -203,7 +190,6 @@
       transform: scale(0.98);
     }
 
-    /* Popup Modal */
     .modal {
       display: none;
       position: fixed;
@@ -305,7 +291,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       h1 {
         font-size: 2em;
@@ -323,42 +308,16 @@
   </style>
 </head>
 <body>
-  <!-- Sao lấp lánh -->
   <div class="stars" id="stars"></div>
 
   <div class="container">
     <h1>🌙 Download Center</h1>
     
-    <div class="files-grid">
-      <!-- KuaikanMH -->
-      <div class="box">
-        <div class="logo-container">
-          <img src="https://iili.io/CN21wdu.jpg" alt="KuaikanMH">
-        </div>
-        <h2>KuaikanMH</h2>
-        <p>Download truyện từ Kuaikan Manhua</p>
-        <button class="download-btn" onclick="showDownload('kuai', 'KuaikanMH.rar')">
-          <span>⬇️</span>
-          <span>Download</span>
-        </button>
-      </div>
-
-      <!-- Comix -->
-      <div class="box">
-        <div class="logo-container">
-          <img src="https://iili.io/CN2G2F1.jpg" alt="Comix">
-        </div>
-        <h2>Comix</h2>
-        <p>Tải truyện trên Comix.to</p>
-        <button class="download-btn" onclick="showDownload('comix', 'Comix.rar')">
-          <span>⬇️</span>
-          <span>Download</span>
-        </button>
-      </div>
+    <div class="files-grid" id="filesGrid">
+      <!-- Files sẽ được render bằng JS -->
     </div>
   </div>
 
-  <!-- Modal Popup -->
   <div id="downloadModal" class="modal">
     <div class="modal-content">
       <h2>📥 Xác nhận tải xuống</h2>
@@ -373,6 +332,7 @@
     </div>
   </div>
 
+  <script src="data.js"></script>
   <script>
     const _0x4d3f = 'aHR0cHM6Ly9kb3dubG9hZC5wbGFudHNrYWxhbjEyMy53b3JrZXJzLmRldg==';
     
@@ -382,6 +342,7 @@
 
     let currentDownload = null;
 
+    // Tạo sao
     const starsContainer = document.getElementById('stars');
     const starCount = 150;
 
@@ -400,6 +361,26 @@
       starsContainer.appendChild(star);
     }
 
+    // Render files từ data.js
+    function renderFiles() {
+      const filesData = getFilesData();
+      const grid = document.getElementById('filesGrid');
+      
+      grid.innerHTML = filesData.map(file => `
+        <div class="box">
+          <div class="logo-container">
+            <img src="${file.cover}" alt="${file.name}">
+          </div>
+          <h2>${file.name.replace('.rar', '')}</h2>
+          <p>${file.description}</p>
+          <button class="download-btn" onclick="showDownload('${file.id}', '${file.name}')">
+            <span>⬇️</span>
+            <span>Download</span>
+          </button>
+        </div>
+      `).join('');
+    }
+
     function showDownload(id, filename) {
       currentDownload = { id, filename };
       document.getElementById('fileName').textContent = filename;
@@ -413,11 +394,9 @@
       document.getElementById('loadingIcon').style.display = 'none';
     }
 
-    // Xác nhận download
     async function confirmDownload() {
       if (!currentDownload) return;
 
-      // Hiển thị loading
       document.getElementById('confirmText').style.display = 'none';
       document.getElementById('loadingIcon').style.display = 'inline-block';
 
@@ -453,7 +432,10 @@
       }
     }
 
-    // Chặn inspect element (optional)
+    // Render files khi trang load
+    renderFiles();
+
+    // Bảo vệ
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.onkeydown = function(e) {
       if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) {
